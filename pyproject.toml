@@ -1,0 +1,76 @@
+[project]
+name = "autobiz"
+version = "0.1.0"
+description = "Kernel-first agentic business platform"
+requires-python = ">=3.10"
+dependencies = [
+    "pydantic>=2.0.0",
+    "pytest>=7.4.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.7.0",
+    "pytest-cov>=4.1.0",
+]
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "N",   # pep8-naming
+    "UP",  # pyupgrade
+]
+ignore = []
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+markers = [
+    "unit: Isolated unit tests with mocked dependencies",
+    "integration_internal: Integration tests with real DB, mocked APIs",
+    "integration_external: Integration tests with real test-mode APIs",
+    "e2e: End-to-end tests with full stack",
+    "P0: Critical path tests (100% required)",
+    "P1: Core functionality tests (≥95% LCB required)",
+    "P2: Enhancement tests (≥80% LCB required)",
+    "deterministic: Same input produces same output",
+    "pseudo_deterministic: Deterministic with seed",
+    "stochastic: Inherently variable behavior",
+    "oracle_state_change: Verifies DB/API state",
+    "oracle_schema: Verifies schema validity",
+    "oracle_semantic: Verifies meaning equivalence",
+    "oracle_statistical: Verifies distribution",
+]
+
+[tool.setuptools]
+packages = ["autobiz", "autobiz.kernel", "autobiz.businesses"]
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
