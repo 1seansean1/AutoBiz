@@ -112,7 +112,7 @@ def upgrade() -> None:
             ON receipts(external_provider, external_idempotency_key)
             WHERE external_idempotency_key IS NOT NULL;
         CREATE INDEX idx_receipts_ttl
-            ON receipts(ttl_expires_at) WHERE ttl_expires_at < NOW();
+            ON receipts(ttl_expires_at);
         """
     )
 
