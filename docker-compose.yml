@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: autobiz_postgres_test
+    environment:
+      POSTGRES_USER: autobiz_test
+      POSTGRES_PASSWORD: test_password_NEVER_IN_PROD
+      POSTGRES_DB: autobiz_test
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U autobiz_test -d autobiz_test"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - autobiz_test
+
+  redis:
+    image: redis:7-alpine
+    container_name: autobiz_redis_test
+    ports:
+      - "6380:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_test_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - autobiz_test
+
+  langfuse:
+    image: langfuse/langfuse:latest
+    container_name: autobiz_langfuse_test
+    environment:
+      DATABASE_URL: postgresql://autobiz_test:test_password_NEVER_IN_PROD@postgres:5432/autobiz_test
+      NEXTAUTH_SECRET: test_nextauth_secret_CHANGE_IN_PROD
+      SALT: test_salt_CHANGE_IN_PROD
+      NEXTAUTH_URL: http://localhost:3000
+      TELEMETRY_ENABLED: "false"
+      LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES: "true"
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - autobiz_test
+
+volumes:
+  postgres_test_data:
+  redis_test_data:
+
+networks:
+  autobiz_test:
+    driver: bridge
