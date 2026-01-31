@@ -39,6 +39,7 @@ def test_h09_dev_stack_healthchecks() -> None:
 
     # Parse service status
     import json
+
     services = [json.loads(line) for line in result.stdout.strip().split("\n") if line]
 
     required_services = {"autobiz_postgres_test", "autobiz_redis_test", "autobiz_langfuse_test"}
@@ -50,7 +51,16 @@ def test_h09_dev_stack_healthchecks() -> None:
 
     # Verify PostgreSQL health
     pg_result = subprocess.run(
-        ["docker", "exec", "autobiz_postgres_test", "pg_isready", "-U", "autobiz_test", "-d", "autobiz_test"],
+        [
+            "docker",
+            "exec",
+            "autobiz_postgres_test",
+            "pg_isready",
+            "-U",
+            "autobiz_test",
+            "-d",
+            "autobiz_test",
+        ],
         capture_output=True,
         check=False,
     )
@@ -68,7 +78,14 @@ def test_h09_dev_stack_healthchecks() -> None:
 
     # Verify Langfuse health (allow some startup time)
     langfuse_result = subprocess.run(
-        ["docker", "exec", "autobiz_langfuse_test", "curl", "-f", "http://localhost:3000/api/health"],
+        [
+            "docker",
+            "exec",
+            "autobiz_langfuse_test",
+            "curl",
+            "-f",
+            "http://localhost:3000/api/health",
+        ],
         capture_output=True,
         check=False,
         timeout=10,
@@ -84,9 +101,7 @@ def test_h09_env_file_exists() -> None:
     if os.getenv("CI") == "true":
         pytest.skip("Local dev environment check only")
 
-    assert os.path.exists(".env"), (
-        ".env file missing. Copy .env.example to .env and configure"
-    )
+    assert os.path.exists(".env"), ".env file missing. Copy .env.example to .env and configure"
 
 
 @pytest.mark.unit
@@ -105,6 +120,4 @@ def test_h09_database_name_contains_test() -> None:
     if not db_url:
         pytest.skip("DATABASE_URL not set - run 'make dev' first")
 
-    assert "_test" in db_url, (
-        f"DATABASE_URL must contain '_test' for safety. Got: {db_url}"
-    )
+    assert "_test" in db_url, f"DATABASE_URL must contain '_test' for safety. Got: {db_url}"
