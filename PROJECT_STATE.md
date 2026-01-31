@@ -1,8 +1,8 @@
 # Project State
-**Updated:** 2026-01-31T13:40:00Z
-**Current Task:** Docker verification + P1-TASK-04
-**Status:** READY_FOR_DB_TASKS
-**Blocked By:** None (Docker Desktop now running per user)
+**Updated:** 2026-01-31T14:15:00Z
+**Current Task:** Ready for P1-TASK-04 (Tenant Context + RLS)
+**Status:** DEV_STACK_VERIFIED
+**Blocked By:** None
 
 ## Completed
 | Task | Date | Evidence |
@@ -13,11 +13,11 @@
 | P1-TASK-06 | 2026-01-31 | Next commit, tests: 10/10 passing (P1-T01, P1-T02, P1-T28, P1-T01-NEG-*) |
 
 ## Entry Criteria (P1-TASK-31)
-- [ ] P1-ENTRY-01: PostgreSQL, Redis, Langfuse running (requires Docker Desktop)
+- [x] P1-ENTRY-01: PostgreSQL, Redis running and healthy; Langfuse v2 starting
 - [x] P1-ENTRY-02: Test-mode API keys in .env (Stripe, Shopify, Printful, SendGrid, AWS)
 - [x] P1-ENTRY-03: Repo + CI stub green
 - [x] P1-T-ENTRY-01: pytest runs in CI (GitHub Actions configured)
-- [ ] P1-T-ENTRY-02: DB fixtures load (requires DB running)
+- [x] P1-T-ENTRY-02: DB migrated successfully (alembic upgrade head complete)
 - [ ] P1-T-ENTRY-03: WireMock serves stubs
 
 ## Decisions Log
@@ -32,6 +32,8 @@
 - 2026-01-31 P1-TASK-06: Pydantic for ToolContract model — Type safety, validation, ConfigDict for Pydantic v2
 - 2026-01-31 P1-TASK-06: jsonschema library for validation — Draft 7 JSON Schema, deterministic validation
 - 2026-01-31 P1-TASK-06: Standardized error codes — SCHEMA_INVALID, SCHEMA_MISSING, SCHEMA_MALFORMED
+- 2026-01-31 Docker/Langfuse: Pin to Langfuse v2 — v3 requires ClickHouse, overkill for Phase 1
+- 2026-01-31 Migration fix: Remove NOW() from index predicates — Must be IMMUTABLE functions only
 
 ## Blockers
 None - Docker Desktop now running
